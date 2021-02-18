@@ -1,0 +1,123 @@
+*********************************************************************
+* VID5.PRG FEITO EM CLIPPER 5.3 ATENCAO NAO CLIILA EM CLIPPER SUNNER *
+**********************************************************************
+SAVE SCREEN TO VTELA_VID1
+PRIVATE VN[8],VMSG[8]
+
+VN[1] = "1 - Todos"
+VN[2] = REPLICATE("Ä",25)
+VN[3] = "2 - Cliente"
+VN[4] = "3 - Produto"
+VN[5] = "4 - Classe"
+VN[6] = "5 - Tipo"
+VN[7] = "6 - Usuario"
+VN[8] = "7 - Locacäes"
+
+VMSG[1] = "Organiza Todos Os Arquivos"
+VMSG[2] = ""
+VMSG[3] = "Organiza Apenas o de Cliente"
+VMSG[4] = "Organiza Apenas o de Produto"
+VMSG[5] = "Organiza Apenas o de Classe"
+VMSG[6] = "Organiza Apenas o de Tipo"
+VMSG[7] = "Organiza Apenas o de Usuario"
+VMSG[8] = "Organiza Apenas o de Locacao"
+
+DO WHILE .T.
+	VOPCAO = BOXMENU(8,VN,VMSG,11,50,25)
+	DO CASE
+		CASE VOPCAO = 0
+			EXIT
+		CASE VOPCAO = 1
+			INDEX_BANCO("T")
+		CASE VOPCAO = 3
+			INDEX_BANCO("C")
+		CASE VOPCAO = 4
+			INDEX_BANCO("P")
+		CASE VOPCAO = 5
+			INDEX_BANCO("A")
+		CASE VOPCAO = 6
+			INDEX_BANCO("O")
+		CASE VOPCAO = 7
+			INDEX_BANCO("U")
+		CASE VOPCAO = 8
+			INDEX_BANCO("L")
+	ENDCASE
+ENDDO
+RESTORE SCREEN FROM VTELA_VID1
+RETURN
+
+PROCEDURE INDEX_BANCO
+PARAMETERS VINDEX
+SAVE SCREEN TO VTELA_INDEX
+IF VINDEX = "C" .OR. VINDEX = "T"
+	BOX("AGUARDE, Carregando Arquivos de Cliente")
+	USE CLIENTE
+	IF VINDEX = "T"
+		PACK
+	ENDIF
+	INDEX ON CODCLI TO CLIENTEA
+	INDEX ON NOME TO CLIENTEB
+	CLOSE ALL
+ENDIF
+IF VINDEX = "P" .OR. VINDEX = "T"
+	BOX("AGUARDE, Carregando Arquivos de Produto ")
+	USE PRODUTO
+	IF VINDEX = "T"
+		PACK
+	ENDIF
+	INDEX ON CODPROD TO PRODUTOA
+	INDEX ON DESCRICAO TO PRODUTOB
+	CLOSE ALL
+ENDIF
+IF VINDEX = "O" .OR. VINDEX = "T"
+	BOX("AGUARDE, Carregando Arquivos de Tipo")
+	USE TIPO
+	IF VINDEX = "T"
+		PACK
+	ENDIF
+	INDEX ON CODTIPO TO TIPOA
+ENDIF	
+IF VINDEX = "A" .OR. VINDEX = "T"
+	BOX("AGUARDE, Carregando Arquivos de Classe")
+	USE CLASSE
+	IF VINDEX = "T"
+		PACK
+	ENDIF
+	INDEX ON CODCLAS TO CLASSEA
+ENDIF
+IF VINDEX = "U" .OR. VINDEX = "T"
+	BOX("AGUARDE, Carregando Arquivos de Usuario")
+	USE USUARIO
+	IF VINDEX = "T"
+		PACK
+	ENDIF
+	INDEX ON COD_U TO USUARIOA
+ENDIF
+IF VINDEX = "L" .OR. VINDEX = "T"
+	BOX("AGUARDE, Carregando Arquivos de LOCACOES")
+	USE LOCACAO
+	IF VINDEX = "T"
+		PACK
+	ENDIF
+	INDEX ON CODCLI TO LOCACAOA
+	INDEX ON LANCA TO LOCACAOB
+	INDEX ON NOME TO LOCACAOD
+	USE LOCACAO2
+	INDEX ON PRODUTO TO LOCACAOC
+ENDIF
+IF VINDEX = "T"
+	USE JOGOFIM 
+	PACK
+	INDEX ON INICIO TO JOGOFIM
+	USE CJOGO
+	PACK
+	INDEX ON CODJOGO TO CJOGOA
+	USE PAGAR
+	PACK
+	INDEX ON COD TO PAGAR1
+	USE RECEBER
+	PACK
+	INDEX ON COD TO RECEBER1
+ENDIF
+CLOSE ALL
+RESTORE SCREEN FROM VTELA_INDEX

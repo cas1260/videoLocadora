@@ -1,0 +1,90 @@
+********************************
+* LOC33 - PESQUISA POR ATORES  *
+********************************
+PRIVATE VTELA,VCAMPOS[3],VCAB[3],VCOND
+SAVE SCREEN TO VTELA
+
+DO WHILE .T.
+	USE PRODUTO INDEX PRODUTOB INDEX PRODUTOA
+	@ 05,03 CLEAR TO 23,77
+	
+	VCHAVE=SPACE(40)
+	@ 10,10 SAY "Informe o Nome do Autor : " GET VCHAVE PICTURE "@!" 
+	READ
+
+	IF LASTKEY() = 27
+		EXIT
+	ENDIF	
+	IF LASTKEY()#27
+	
+      VCOND = "(ATORES = ALLTRIM(VCHAVE) .OR. (' '+ALLTRIM(VCHAVE)+' ')$(' '+ALLTRIM(ATORES)+' '))"
+		
+		BOX("Aguarde um Momento Por Favor!")
+		
+		IF .NOT. EMPTY(VCHAVE)
+			SELE 1
+			COPY TO LOCTEMP FOR &VCOND 
+			USE LOCTEMP
+			IF EOF()
+				MSGBOX("Autor nao encontrado")
+				USE
+				EXIT
+			ENDIF
+				
+		ENDIF	
+
+		VCAMPOS[1] = "DESCRICAO"
+		VCAMPOS[2] = "CODPROD"
+		VCAMPOS[3] = "ATORES"
+
+		VCAB[1] = "Descricao"
+		VCAB[2] = "Codigo" 
+		VCAB[3] = "Atores"
+
+		@ 05,03 CLEAR TO 23,77
+		@ 05,03 to 23,75 DOUBLE
+		CENTRA(03,03,75,"[ " + STRZERO(LASTREC(),6)+" ]")
+		DBEDIT(6,4,22,74,VCAMPOS,0,0,VCAB)
+		IF LASTKEY() = 27
+			EXIT
+		ENDIF	
+		IF SIMNAO(20,40,"Deseja imprimir?",.f.) = 1
+			GO TOP
+			DO T_PRINT
+			IF LASTKEY()#27
+				SET DEVICE TO PRINT
+*				SET PRINTER TO VIDEO
+				X = 4
+				CENTRA(00,00,60,VCABE1)
+				CENTRA(01,00,60,VCABE2)
+				CENTRA(02,00,60,VCABE3)
+				DO WHILE !EOF()
+					@ X,00 SAY NOME + " " + CODCLI  PICT "@!"
+					X = X + 1
+					@ X,00 SAY DEP1
+					X = X + 1
+					@ X,00 SAY DEP2
+					X = X + 1
+					@ X,00 SAY REPLICATE("=",60)
+					X = X + 1
+					SKIP
+				ENDDO
+				X = X + 1 
+				CENTRA(X,00,60,VRODA1)
+				X = X + 1
+				CENTRA(X,00,60,VRODA2)
+				X = X + 1
+				CENTRA(X,00,60,VRODA3)
+				@ X+33,00 SAY ""
+				SET DEVICE TO SCREEN 
+			ENDIF
+		ENDIF
+	ENDIF
+	SET DEVICE TO SCREEN 
+ENDDO
+
+RESTORE SCREEN FROM VTELA
+
+CLOSE DATABASES
+
+RETURN

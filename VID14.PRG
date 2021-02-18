@@ -1,0 +1,64 @@
+**************
+* EXPLICACAO *
+**************
+PRIVATE VTELA,VCAMPOS[8],VCAB[8],VCOND
+
+SAVE SCREEN TO VTELA1
+
+DO WHILE LASTKEY()#27
+
+	@ 05,03 CLEAR TO 19,77
+	
+	VCHAVE  = DATE()
+	VCHAVE1 = DATE()
+	@ 10,05 SAY "Informe Data " GET VCHAVE PICTURE "@!" VALID !EMPT(VCHAVE)
+	@ 10,30 SAY "Informe a Data Final " GET VCHAVE1 PICTURE "@!" VALID !EMPT(VCHAVE1)
+	READ
+
+	IF LASTKEY()#27
+
+      VCOND = "DATA>=VCHAVE .AND. DATA<=VCHAVE1"
+		
+		IF .NOT. EMPTY(VCHAVE)
+			USE EXPLICA
+			COPY TO LOC FOR &VCOND 
+			USE LOC
+			IF EOF()
+				MSGBOX("Cliente nao encontrado")
+				USE
+				EXIT
+			ENDIF
+				
+		ENDIF	
+
+		VCAMPOS[1] = "NOME"
+		VCAMPOS[2] = "CODCLI"
+		VCAMPOS[3] = "DATA"
+		VCAMPOS[4] = "EXPLICACAO"
+		VCAMPOS[5] = "VALORT"
+		VCAMPOS[6] = "VALOR"
+		VCAMPOS[7] = "NOME_U"
+		
+
+		VCAB[1] = "NOME"
+		VCAB[2] = "Codigo"
+		VCAB[3] = "Data"
+		VCAB[4] = "Explicacao"
+		VCAB[5] = "Valor a Pagar"
+		VCAB[6] = "Valor Pago"
+		VCAB[7] = "Usuario"
+
+		@ 05,03 CLEAR TO 19,77
+		@ 06,03 to 19,75 DOUBLE
+		DBEDIT(7,4,18,74,VCAMPOS,0,0,VCAB)
+	
+		
+	ENDIF
+	
+ENDDO
+
+RESTORE SCREEN FROM VTELA1
+
+CLOSE DATABASES
+
+RETURN

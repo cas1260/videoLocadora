@@ -1,0 +1,238 @@
+*****************************************
+*                                       *
+* LOC14.PRG - FINALIZA JOGO             *
+*                                       *
+*****************************************
+SAVE SCREEN TO VTELA 
+
+*USE JOGOFIM INDEX JOGOFIM ALIAS JOGOFIM
+
+VMOSTRA=.F.
+Y=0
+
+SET CURSOR ON
+
+DO WHILE LASTKEY()#27
+	USE JOGO
+	SAI=.F.
+	GO TOP
+
+	@ 05,05 CLEAR TO 19,77	
+
+	IF VMOSTRA=.F. .AND. LASTKEY()#27
+		VMOSTRA=.T.
+		@ 10,10 SAY "MAQUINA  INICIO     FIM       OPCAO   TEMPO" 
+		@ 11,10 SAY "ЭЭЭЭЭЭЭ  ЭЭЭЭЭЭЭЭ   ЭЭЭЭЭЭЭЭ  ЭЭЭЭЭ  ЭЭЭЭЭЭЭЭ"
+		LINHA=13
+		VOPCAO=ALLTRIM(STR(OPCAO))
+*		VTEMPO=TEMPO(VOPCAO)			
+		DO WHILE .NOT. EOF()  .AND. LASTKEY()#27
+			@ LINHA,10 SAY MAQUINA
+			@ LINHA,19 SAY INICIO
+			@ LINHA,30 SAY TEMPOINV(ALLTRIM(STR(OPCAO)),INICIO)
+         @ LINHA,40 SAY OPCAO
+			@ LINHA,47 SAY VTEMPO1(ALLTRIM(STR(OPCAO)))
+			SKIP
+			LINHA=LINHA+2
+		ENDDO
+			
+	ENDIF
+
+	USE JOGO
+	GO TOP
+
+	DO WHILE LASTKEY()#27
+
+		SET CURSOR OFF
+
+		IF INKEY()=27
+			EXIT
+		ENDIF
+   	
+	   @ 06,10 TO 08,40 
+		@ 07,15 SAY "HORA CERTA..: " 
+		@ 07,29 SAY TIME()
+
+		VINICIO=TEMPO(INICIO)
+		VFIM=TEMPO(TIME())
+		VOPCAO=ALLTRIM(STR(OPCAO))
+		VDATA=DATA
+		IF LASTKEY()#27
+*		VSAI = .T.	
+*		VOPCAO = ALLTRIM(STR(VOPCAO))
+		DO CASE
+			CASE VOPCAO = "1" .AND. ((VFIM-VINICIO)>=3600) .AND. LASTKEY()#27
+				VSAI=.T.
+				VTEMPO="1 HORA"
+			CASE VOPCAO = "2" .AND. ((VFIM-VINICIO)>=1800) .AND. VDATA=DATE() .AND. LASTKEY()#27
+				VSAI=.T.
+				VTEMPO="MEIA HORA"
+			CASE VOPCAO = "3" .AND. ((VFIM-VINICIO)>=1200) .AND. VDATA=DATE() .AND. LASTKEY()#27
+				VSAI=.T.
+				VTEMPO="20 MINUTOS"
+			CASE VOPCAO = "4" .AND. ((VFIM-VINICIO)>=900) .AND. VDATA=DATE() .AND. LASTKEY()#27
+				VSAI=.T.				
+				VTEMPO="15 MINUTOS"
+			CASE VOPCAO = "5" .AND. ((VFIM-VINICIO)>=600) .AND. VDATA=DATE() .AND. LASTKEY()#27
+				VSAI=.T.
+				VTEMPO="10 MINUTOS"
+			CASE VOPCAO = "6" .AND. ((VFIM-VINICIO)>=5400) .AND. VDATA=DATE() .AND. LASTKEY()#27
+				VSAI=.T.
+				VTEMPO="1 HORA E MEIA"				
+*			OTHERWISE
+*				VSAI = .F.
+		ENDCASE
+
+		ENDIF
+
+		IF VSAI
+			EXIT
+		ENDIF
+		
+		SKIP
+	
+		IF EOF()
+			GO TOP
+		ENDIF				
+
+	ENDDO
+	
+	IF LASTKEY()#27 .AND. VSAI
+
+		VMAQ=MAQUINA
+		VINICIO=INICIO
+		VOPCAO=ALLTRIM(STR(OPCAO))
+
+		XX=55
+
+		@ 05,07 CLEAR TO 20,77
+		
+		@ 05,07 SAY "ллллллллл  лл  ллл       ллл      ллллл   ллллл    лллллм    ллллл "
+		@ 06,07 SAY "лл         лл  лллл     лллл         лл  лл   лл  лл        лл   лл"
+		@ 07,07 SAY "лл         лл  лл лл   лл лл         лл  лл   лл  лл        лл   лл"
+		@ 08,07 SAY "ллллллл    лл  лл  лл лл  лл         лл  лл   лл  лл лллм   лл   лл"
+		@ 09,07 SAY "лл         лл  лл   ллл   лл         лл  лл   лл  лл   лл   лл   лл"
+		@ 10,07 SAY "лл         лл  лл         лл    лл   лл  лл   лл  лл   лл   лл   лл"
+		@ 11,07 SAY "лл         лл  лл         лл     ллллл    ллллл    ллллл	  ллллл"
+		
+		@ 13,07 SAY "ллл       ллл      лл:       ллллл"
+		@ 14,07 SAY "лллл      ллл     лллл     лл     лл"
+		@ 15,07 SAY "лл лл   лл лл    лл  лл    лл     лл"
+		@ 16,07 SAY "лл  лл лл  лл    лл  лл    лл     лл"
+		@ 17,07 SAY "лл   ллл   лл   лллллллл   лл  л  лл"
+		@ 18,07 SAY "лл         лл  лл      лл  лл  мммл"
+		@ 19,07 SAY "лл         лл  лл      лл   лллллл лл"
+
+
+
+		DO CASE
+			CASE VMAQ="1" 
+				 @ 14,XX SAY " лл"
+				 @ 15,XX SAY "ллл"
+				 @ 16,XX SAY " лл"
+				 @ 17,XX SAY " лл"
+				 @ 18,XX SAY " лл"
+				 @ 19,XX SAY "лллл"
+	
+			CASE VMAQ="2"
+			    @ 14,XX SAY "мллллм"
+				 @ 15,XX SAY "::   лл"
+				 @ 16,XX SAY "    лл"
+				 @ 17,XX SAY "   лл"
+				 @ 18,XX SAY " млл"
+             @ 19,XX SAY "лллллл" 
+			CASE VMAQ="3" 
+			    @ 14,XX SAY "лллллм"
+				 @ 15,XX SAY "    лл" 				 
+				 @ 16,XX SAY " лллл"
+				 @ 17,XX SAY "    лл"
+				 @ 18,XX SAY "    лл"
+				 @ 19,XX SAY "ллллл"
+			CASE VMAQ="4"
+				 @ 14,XX SAY "   лллл"
+				 @ 15,XX SAY "  лл лл"				  
+				 @ 16,XX SAY " лл  лл"
+				 @ 17,XX SAY "ллллллл"
+				 @ 18,XX SAY "     лл"
+				 @ 19,XX SAY "     лл"
+				 
+		ENDCASE
+
+		INKEY(0)
+
+		DO WHILE INKEY()#0
+			TONE(800,11)
+			TONE(900,15)
+			TONE(700,10)			
+		ENDDO
+
+	ENDIF
+
+	IF VSAI
+		VSAI=.F.
+				  
+		@ 05,03 CLEAR TO 23,77
+			
+		VMAQ=MAQUINA
+		VJOGO=JOGO
+		VINICIO=INICIO
+		VOPCAO=ALLTRIM(STR(OPCAO))
+		VFIM=SPACE(1)
+		VPAGO=PAGO
+		@ 07,40 TO 14,61 DOUBLE
+		CENTRA(07,40,61,"[ OPCOES DE JOGO ]")
+		@ 08,41 SAY "( ) 1 hora    " 
+		@ 09,41 SAY "( ) meia hora "  
+		@ 10,41 SAY "( ) 20 minutos"
+		@ 11,41 SAY "( ) 15 minutos"
+		@ 12,41 SAY "( ) 10 minutos"
+		@ 13,41 SAY "( ) 1 hora e meia"
+*		@ 14,41 SAY "( ) 2 horas"
+*		@ 15,41 SAY "( ) 40 minutos"					
+*		@ 16,41 SAY "( ) 50 minutos"						
+		@ 07 + VOPCAO,42 SAY CHR(7)
+		SET CURSO ON
+		@ 10,05 SAY "MAQUINA: " + VMAQ
+		@ 12,05 SAY "INICIO.: " + VINICIO
+		@ 14,05 SAY "PAGO...: " + VPAGO 
+		@ 16,05 SAY "JOGO...: " + VJOGO 
+		@ 18,05 SAY "PAGO...: " GET VPAGO PICTURE "!" VALID VPAGO$"SN"
+		@ 20,05 SAY "FIM....: " GET VFIM PICTURE "!"  VALID VFIM$"SN"
+		READ
+	
+		IF LASTKEY()#27
+			DELE
+			PACK
+			VMOSTRA=.F.
+			USE JOGOFIM INDEX JOGOFIM ALIAS JOGOFIM
+			APPEND BLANK
+			REPLACE JOGO WITH VJOGO
+			REPLACE MAQUINA WITH VMAQ
+			REPLACE INICIO WITH VINICIO 
+			REPLACE OPCAO WITH VOPCAO 
+			REPLACE DATA WITH DATE()
+			REPLACE FIM WITH VFIM
+			REPLACE PAGO WITH VPAGO
+		   SAVE SCREEN
+			MSGBOX("Fim de jogo")
+*			DO ESPERA 
+			RESTORE SCREEN
+		ENDIF
+
+	ENDIF
+
+	USE JOGO
+	IF EOF()
+		EXIT
+	ENDIF
+	
+ENDDO
+
+CLOSE DATABASES
+
+RESTORE SCREEN FROM VTELA
+
+SET CURSOR ON
+
+RETURN
+	

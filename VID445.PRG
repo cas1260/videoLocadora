@@ -1,0 +1,33 @@
+*********************************************
+* CONFIGURA€åES DO SISTEMA - TEMPO DE JOGO  *
+*********************************************
+SAVE SCREEN TO VTELA_TEMPO
+@ 13,44 CLEAR TO 20,74
+@ 13,44 TO 20,74 
+VV1 = VT1
+VV2 = VT2
+VV3 = VT3
+VV4 = VT4
+VV5 = VT5
+@ 14,46 SAY "1 Hora       : " GET VV1
+@ 15,46 SAY "Meia hora    : " GET VV2
+@ 16,46 SAY "20 Minutos   : " GET VV3
+@ 17,46 SAY "15 Minutos   : " GET VV4
+@ 18,46 SAY "10 Minutos   : " GET VV5
+READ
+IF LASTKEY() # 27
+	USE CONFIG
+	REPLACE V1 WITH VV1
+	REPLACE V2 WITH VV2
+	REPLACE V3 WITH VV3
+	REPLACE V4 WITH VV4
+	REPLACE V5 WITH VV5
+	VT1 = VV1
+	VT2 = VV2
+	VT3 = VV3
+	VT4 = VV4
+	VT5 = VV5
+ENDIF
+CLOSE ALL
+RESTORE SCREEN FROM VTELA_TEMPO
+RETURN

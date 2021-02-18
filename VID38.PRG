@@ -1,0 +1,106 @@
+************************************************
+* LOC37 - PESQUISA ULTIMA LOCACAO POR CLIENTE *
+***********************************************
+PRIVATE VTELA,VCAMPOS[4],VCAB[4],VCOND
+SAVE SCREEN TO VTELA
+
+DO WHILE .T.
+
+	@ 05,03 CLEAR TO 23,77
+	
+	VCHAVE=SPACE(5)
+	
+	@ 10,10 SAY "Informe Produto: " GET VCHAVE PICTURE "@!" 
+	READ
+	IF LASTKEY() = 27
+		EXIT
+	ENDIF
+	IF VCHAVE = SPACE(5)
+		VCHAVE =  SHOW()
+	ENDIF
+
+	VCHAVE=STRZERO(VAL(VCHAVE),5)
+	@ 10,10 SAY "Informe Produto:  " + VCHAVE 
+	USE PRODUTO INDEX PRODUTOA
+	SEEK VCHAVE 
+	IF EOF()
+		MSGBOX("Produto n∆o Encontrado!")
+		LOOP
+	ENDIF
+	VDESCRICAO = DESCRICAO
+
+	IF LASTKEY()#27
+
+      VCOND = "VCHAVE=PRODUTO"
+			
+		IF .NOT. EMPTY(VCHAVE)
+			BOX("Aguarde um Momento!")
+			USE LOCACAO2 
+			COPY TO LOCTEMP FOR &VCOND 
+			USE LOCTEMP
+			IF EOF()
+				MSGBOX("Produto nao encontrado")
+				USE
+				EXIT
+			ENDIF
+				
+		ENDIF	
+		VCAMPOS[1] = "CLIENTE"
+		VCAMPOS[2] = "NOMECLI"
+		VCAMPOS[3] = "PRODUTO"
+		VCAMPOS[4] = "DESCRICAO"
+		
+	
+		VCAB[1] = "Codigo" 
+		VCAB[2] = "Nome do Cliente"
+		VCAB[3] = "Produto"
+		VCAB[4] = "Descricao"
+
+		@ 05,03 CLEAR TO 22,77
+		@ 05,03 TO 22,76 DOUBLE
+		CENTRA(22,03,76,"[ " + STRZERO(LASTREC()) + " ]") 
+		DBEDIT(06,4,21,75,VCAMPOS,0,0,VCAB)
+		IF LASTKEY() = 27
+			LOOP
+		ENDIF
+		IF SIMNAO(20,10,"Deseja Imprimir?",.T.) = 1
+			T_PRINT()
+			IF LASTKEY()#27
+				SET DEVICE TO PRINT
+		*		SET PRINTER TO VIDEO
+				CENTRA(00,00,60,VCABE1)
+				CENTRA(01,00,60,VCABE2)
+				CENTRA(02,00,60,VCABE3)
+				@ 05,00 SAY REPLICATE("=",60)
+				@ 06,02 SAY "Relatorio de Cliente por Produto "
+				@ 07,02 SAY VCHAVE + " " + VDESCRICAO
+				@ 08,00 SAY REPLICATE("=",60)
+				VLINHA = 9
+				GO TOP
+				DO WHILE !EOF()
+					@ VLINHA,02 SAY CLIENTE
+					@ VLINHA,10 SAY NOMECLI
+					SKIP
+					VLINHA = VLINHA + 1
+				ENDDO
+				VLINHA = VLINHA + 1				
+				@ VLINHA,02 SAY "Total de Cliente [ " + STRZERO(LASTREC(),10) + " ]"
+				VLINHA = VLINHA + 2
+				CENTRA(VLINHA,00,60,VRODA1)
+				VLINHA = VLINHA + 1
+				CENTRA(VLINHA,00,60,VRODA2)
+				VLINHA = VLINHA + 1
+				CENTRA(VLINHA,00,60,VRODA2)
+				VLINHA = VLINHA + 1
+				@ VLINHA+33,00 SAY ""
+				SET DEVICE TO SCREEN
+			ENDIF
+		ENDIF
+	ENDIF	
+ENDDO
+
+RESTORE SCREEN FROM VTELA
+
+CLOSE DATABASES
+
+RETURN

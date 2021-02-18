@@ -1,0 +1,99 @@
+
+*****************************************
+*                                       *
+* LOC1.PRG - TRABALHO                   *
+*                                       *
+*****************************************
+
+RESTORE SCREEN
+
+SAVE SCREEN TO VTELA 
+
+USE JOGO ALIAS JOGO
+
+SET CURSOR ON
+
+DO WHILE LASTKEY()#27
+
+	@ 05,03 CLEAR TO 19,77
+	VMAQ=SPACE(2)
+	VJOGO=SPACE(4)
+	VINICIO=TIME()
+	VOPCAO=SPACE(2)
+	VPAGO=SPACE(1)
+
+	@ 07,50 SAY "OPCOES DE JOGO" 
+	@ 08,50 SAY "==============" 
+	@ 10,50 SAY "1 = 1 hora    " 
+	@ 11,50 SAY "2 = meia hora "  
+	@ 12,50 SAY "3 = 20 minutos"
+	@ 13,50 SAY "4 = 15 minutos"
+	@ 14,50 SAY "5 = 10 minutos"
+*	@ 15,50 SAY "6 = 1 hora e meia"
+*	@ 16,50 SAY "7 = 2 horas"
+*	@ 17,50 SAY "8 = 40 minutos"					
+*	@ 18,50 SAY "9 = 50 minutos"						
+
+	@ 10,10 SAY "MAQUINA: " GET VMAQ PICTURE "9"  VALID VAL(VMAQ) < 5 
+	@ 12,10 SAY "INICIO.: " GET VINICIO
+	@ 14,10 SAY "OPCAO..: " GET VOPCAO PICTURE "9" VALID VAL(VOPCAO) < 6
+	@ 16,10 SAY "JOGO...: " GET VJOGO PICTURE "9999" VALID CALL_JOGO(VJOGO)
+	@ 18,10 SAY "PAGO...: " GET VPAGO PICTURE "!" VALID VPAGO$"SN"
+	READ
+	IF VOPCAO = "1"
+		VV = VT1
+	ELSEIF VOPCAO = "2"
+		VV = VT2
+	ELSEIF VOPCAO = "3"
+		VV = VT3
+	ELSEIF VOPCAO = "4"
+		VV = VT4
+	ELSEIF VOPCAO = "5"
+		VV = VT5
+	ELSE
+		VV = 0
+	ENDIF
+*	INKEY(0)
+	IF LASTKEY()#27
+		USE JOGO
+		APPE BLANK
+		REPLACE JOGO WITH VJOGO
+		REPLACE MAQUINA WITH VMAQ
+		REPLACE INICIO WITH VINICIO 
+		REPLACE OPCAO WITH VOPCAO 
+		REPLACE DATA WITH DATE()
+		REPLACE VALOR WITH VV
+		IF VPAGO = "S"
+			REPLACE NV WITH "SIM"
+		ELSE
+			REPLACE NV WITH "NÇO"
+		ENDIF
+		REPLACE PAGO WITH VPAGO
+	   SAVE SCREEN
+		MSGBOX("Jogo incluido")
+		DO ESPERA 
+		RESTORE SCREEN
+	ENDIF
+	
+ENDDO
+
+RESTORE SCREEN FROM VTELA
+
+RETURN
+*******************
+FUNCTION CALL_JOGO	
+*******************
+PARAMETERS VCHAVE
+IF VCHAVE = SPACE(4)
+	VCHAVE = MOSTRAJOGO()
+ENDIF
+VCHAVE = STRZERO(VAL(VCHAVE),4)
+@ 16,10 SAY "JOGO...:  " + VCHAVE
+USE CJOGO INDEX CJOGOA
+SEEK VCHAVE
+IF !EOF()
+	@ 16,30 SAY NOMEJOGO
+ELSE
+	@ 16,30 SAY "Jogo Indefinido!       "
+ENDIF
+RETURN .T.

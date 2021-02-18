@@ -1,0 +1,61 @@
+*****************************************
+*                                       *
+* VID15.PRG INICIO DE JOGO 				 *
+*                                       *
+*****************************************
+
+SAVE SCREEN TO VTELA 
+SET CURSOR ON
+DO WHILE .T.
+	USE JOGO
+	@ 05,03 CLEAR TO 23,77
+	VMAQ=SPACE(2)
+	VJOGO=SPACE(20)
+	VINICIO=TIME()
+*	VOPCAO=SPACE(2)
+	VPAGO=SPACE(1)
+	@ 07,40 TO 14,61 DOUBLE
+	CENTRA(07,40,61,"[ OPCOES DE JOGO ]")
+	@ 08,41 SAY "( ) 1 hora    " 
+	@ 09,41 SAY "( ) meia hora "  
+	@ 10,41 SAY "( ) 20 minutos"
+	@ 11,41 SAY "( ) 15 minutos"
+	@ 12,41 SAY "( ) 10 minutos"
+	@ 13,41 SAY "( ) 1 hora e meia"
+*	@ 14,41 SAY "( ) 2 horas"
+*	@ 15,41 SAY "( ) 40 minutos"					
+*	@ 16,41 SAY "( ) 50 minutos"						
+
+	@ 10,05 SAY "MAQUINA: " GET VMAQ PICTURE "9" VALID VAL(VMAQ)<6
+	@ 12,05 SAY "INICIO.: " GET VINICIO
+*	@ 09,05 SAY "OPCAO..: " GET VOPCAO PICTURE "9"
+	@ 14,05 SAY "PAGO...: " GET VPAGO PICTURE "!" VALID VPAGO$"SN"
+	@ 16,05 SAY "JOGO...: " GET VJOGO PICTURE "@!"
+	READ
+	IF LASTKEY() = 27
+		EXIT
+	ENDIF
+	VO =  MENU_O(08,6,42,CHR(7),0)
+	IF VOPCAO = 0
+		EXIT
+	ENDIF
+	VOPCAO = STR(VO)
+	IF LASTKEY()#27
+		APPEND BLANK
+		REPLACE NOMEJOGO WITH VJOGO
+		REPLACE MAQUINA WITH VMAQ
+		REPLACE INICIO WITH VINICIO
+		REPLACE OPCAO WITH VO
+		REPLACE DATA WITH DATE()
+*		REPLACE  WITH VO
+	   SAVE SCREEN
+		MSGBOX("Jogo incluido")
+		RESTORE SCREEN
+	ENDIF
+	
+ENDDO
+
+RESTORE SCREEN FROM VTELA
+
+RETURN
+	
